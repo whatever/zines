@@ -46,6 +46,7 @@ Front                   Back
 """
 
 LEFT = 270
+
 RIGHT = 90
 
 SEQUENCE = [
@@ -61,7 +62,6 @@ PAGES = {
     )
     for i, num in enumerate(SEQUENCE)
 }
-
 
 def generate_pdf_doc(pages):
 
@@ -105,9 +105,10 @@ def generate_pdf_doc(pages):
 
 if __name__ == "__main__":
 
-    images = [PAGES.get(i) for i in range(16)]
-
-    doc = generate_pdf_doc(images)
+    doc = generate_pdf_doc([
+        PAGES.get(i)
+        for i in range(16)
+    ])
 
     doc.save("sample.pdf")
 
