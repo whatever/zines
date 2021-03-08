@@ -10,8 +10,7 @@ from collections import namedtuple
 import fitz
 
 
-WIDTH = 595
-HEIGHT = 842
+WIDTH, HEIGHT = fitz.PaperSize("A4")
 
 
 def page_image(zine):
@@ -21,8 +20,7 @@ def page_image(zine):
     col = "white"
     img = Image.new("RGB", (w, h), color=col)
     draw = ImageDraw.Draw(img)
-    draw.text((0//2, h//2), f"page={num}...Fuck this", (0, 0, 0))
-    img.save("{:02d}.jpg".format(num))
+    draw.text((w//8, h//2), f"page={num}...Fuck this", (0, 0, 0))
     return img
 
 
@@ -49,24 +47,17 @@ Front                   Back
 LEFT = 270
 RIGHT = 90
 
-PAGES = {
-    0: ZinePage(4, LEFT),
-    1: ZinePage(5, RIGHT),
-    2: ZinePage(13, LEFT),
-    3: ZinePage(12, RIGHT),
-    4: ZinePage(16, LEFT),
-    5: ZinePage(9, RIGHT),
-    6: ZinePage(1, LEFT),
-    7: ZinePage(8, RIGHT),
+SEQUENCE = [
+    4, 5, 13, 12, 16, 9, 1, 8,
+    2, 7, 15, 10, 14, 11, 3, 6, 
+]
 
-    8: ZinePage(2, LEFT),
-    9: ZinePage(7, RIGHT),
-    10: ZinePage(15, LEFT),
-    11: ZinePage(10, RIGHT),
-    12: ZinePage(14, LEFT),
-    13: ZinePage(11, RIGHT),
-    14: ZinePage(3, LEFT),
-    15: ZinePage(6, RIGHT),
+PAGES = {
+    i: ZinePage(
+        num,
+        (LEFT if i % 2 == 0 else RIGHT),
+    )
+    for i, num in enumerate(SEQUENCE)
 }
 
 
@@ -116,6 +107,9 @@ if __name__ == "__main__":
 
                 zine = PAGES.get(8 + 2*j+i)
 
+                if zine is None:
+                    raise "This failed in a way that we did not expect."
+
                 # ...
                 img = page_image(zine)
                 byte_arr = io.BytesIO()
@@ -131,6 +125,5 @@ if __name__ == "__main__":
 
                 back.insert_image(rect, stream=byte_arr, rotate=zine.rotation)
                 back.draw_rect(rect)
-                # front.insert_text((x, y), f"({x}, {y}) @ {i} @ {j}")
 
         doc.save("sample.pdf")
