@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
+
+
+import argparse
 import http.server
+import logging
 import socketserver
 
 from zine import PAGES, generate_pdf_doc
@@ -15,6 +19,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self._do_get_not_found()
     
     def _do_get_default(self):
+        self.path = "index.html"
+        return http.server.SimpleHTTPRequestHandler.do_GET(self)
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -28,7 +34,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def _do_get_pdf(self):
         self.send_response(200)
-        self.send_header("Content-type", "application/x-pdf")
+        self.send_header("Content-type", "application/pdf")
         self.end_headers()
         doc = generate_pdf_doc([
             PAGES.get(i)
@@ -39,5 +45,12 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
 
-    with socketserver.TCPServer(('', 8081), Handler) as httpd:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--port", type=int, default=8080)
+    args = parser.parse_args()
+
+    logging.basicConfig(level=logging.DEBUG)
+    logging.info("Starting server on 0.0.0.0:%d", args.port)
+
+    with socketserver.TCPServer(('0.0.0.0', args.port), Handler) as httpd:
         httpd.serve_forever()
