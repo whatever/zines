@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw
 WIDTH, HEIGHT = fitz.PaperSize("A4")
 
 
-def page_image(num):
+def page_image(num: int) -> Image:
     """Return a PIL.Image representing that page"""
     w = HEIGHT//4 * 1
     h = WIDTH//2 * 1
@@ -63,7 +63,8 @@ PAGES = {
     for i, num in enumerate(SEQUENCE)
 }
 
-def generate_pdf_doc(pages):
+def generate_pdf_doc(pages: list):
+    """Return a PIL.Image from a ZinePage"""
 
     assert isinstance(pages, list) and len(pages) == 16, "images must be a list of length 16"
 
