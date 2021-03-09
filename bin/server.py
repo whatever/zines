@@ -4,6 +4,7 @@
 import argparse
 import http.server
 import logging
+import os
 import socketserver
 
 from zine import PAGES, generate_pdf_doc
@@ -19,7 +20,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self._do_get_not_found()
     
     def _do_get_default(self):
-        self.path = "index.html"
+        self.path = os.path.relpath(os.path.join(
+            os.path.dirname(__file__),
+            "..",
+            "static",
+            "index.html",
+        ))
+        logging.info("PATH = %s", self.path)
         return http.server.SimpleHTTPRequestHandler.do_GET(self)
         self.send_response(200)
         self.send_header("Content-type", "text/html")
