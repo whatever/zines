@@ -100,17 +100,3 @@ def generate_pdf_doc(pages: list):
                 page.insert_image(rect, stream=byte_arr, rotate=zine.rotation)
                 page.draw_rect(rect)
     return doc
-
-
-
-
-if __name__ == "__main__":
-
-    doc = generate_pdf_doc([
-        PAGES.get(i)
-        for i in range(16)
-    ])
-
-    doc.save("sample.pdf")
-
-    doc.close()
