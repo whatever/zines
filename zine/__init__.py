@@ -11,7 +11,9 @@ import fitz
 from PIL import Image, ImageDraw
 
 
+# XXX: Make this configurable
 WIDTH, HEIGHT = fitz.PaperSize("A4")
+WIDTH, HEIGHT = fitz.PaperSize("letter")
 
 
 def page_image(num: int) -> Image:
