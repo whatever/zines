@@ -2,14 +2,68 @@
 <html>
     <head>
         <title>zine</title>
+        <style>
+            section {
+                margin: 1em 2em;
+                padding: 0;
+            }
+            .page {
+                width: 300px;
+                height: 400px;
+                padding: 1em;
+                margin: 0 0.5em;
+                border: solid 1px black;
+                display: inline-block;
+                background-color: #EEF;
+                box-shadow: 0px 6px 15px 5px rgba(0,0,0,0.16)
+            }
+        </style>
     </head>
     <body>
-        <div>Attach 16 files before posting</div>
         <div>
+            <!--
+            <div>Attach 16 files before posting</div>
             <form enctype="multipart/form-data" action="pdf" method="POST"></form>
                 <input type="file" name="file[]" multiple />
                 <submit></submit>
             </form>
+            -->
+
+            <div><a href="/pdf">Generate PDF</a></div>
+            <div><a href="/pdf">Generate PDF</a></div>
+            <div><a href="/pdf">Generate PDF</a></div>
+            <div><a href="/pdf">Generate PDF</a></div>
+
+            <section>
+                <div class="page" id="cover">cover</div>
+                <div></div>
+            </section>
+
+            <section>
+                <div class="page">1</div>
+                <div class="page">2</div>
+            </section>
+
+            <section>
+                <div class="page">3</div>
+                <div class="page">4</div>
+            </section>
+
+            <section>
+                <div class="page">5</div>
+                <div class="page">6</div>
+            </section>
+
+            <section>
+                <div class="page">7</div>
+                <div class="page">8</div>
+            </section>
+
+            <section>
+                <div class="page">5</div>
+                <div class="page">6</div>
+            </section>
+
         </div>
     </body>
 </html>
