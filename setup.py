@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="zine",
-    version="0.4.20",
+    version="0.0.1",
     scripts=["bin/serve-zine"],
     install_requires=[
         "Pillow>=8.1.2",
