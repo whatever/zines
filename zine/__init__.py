@@ -10,21 +10,12 @@ import fitz
 
 from PIL import Image, ImageDraw
 
+from .samples import page_image, random_image
+
 
 # XXX: Make this configurable
 WIDTH, HEIGHT = fitz.PaperSize("A4")
 WIDTH, HEIGHT = fitz.PaperSize("letter")
-
-
-def page_image(num: int) -> Image:
-    """Return a PIL.Image representing that page"""
-    w = HEIGHT//4 * 1
-    h = WIDTH//2 * 1
-    col = "white"
-    img = Image.new("RGB", (w, h), color=col)
-    draw = ImageDraw.Draw(img)
-    draw.text((w//8, h//2), f"page={num}...Fuck this", (0, 0, 0))
-    return img
 
 
 ZinePage = namedtuple("ZinePage", ["number", "image", "rotation"])
@@ -59,7 +50,7 @@ SEQUENCE = [
 PAGES = {
     i: ZinePage(
         num,
-        page_image(num),
+        random_image(num),
         (LEFT if i % 2 == 0 else RIGHT),
     )
     for i, num in enumerate(SEQUENCE)
