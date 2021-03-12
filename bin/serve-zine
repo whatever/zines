@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+"""Serve website that generates PDF images"""
+
 
 import argparse
 import http.server
@@ -11,6 +13,7 @@ from zine import PAGES, generate_pdf_doc
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
+    """Handle GET requests, routing to private methods"""
     def do_GET(self):
         if self.path == "/":
             self._do_get_default()
@@ -18,8 +21,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self._do_get_pdf()
         else:
             self._do_get_not_found()
-    
+
     def _do_get_default(self):
+        """Handle requests to index"""
         self.path = os.path.relpath(os.path.join(
             os.path.dirname(__file__),
             "..",
@@ -28,18 +32,16 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         ))
         logging.info("PATH = %s", self.path)
         return http.server.SimpleHTTPRequestHandler.do_GET(self)
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-        self.wfile.write(b"yea2")
-    
+
     def _do_get_not_found(self):
+        """Handle requests to pages that don't exist"""
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
         self.wfile.write(b"not found")
 
     def _do_get_pdf(self):
+        """Handle requests to generate a PDF"""
         self.send_response(200)
         self.send_header("Content-type", "application/pdf")
         self.end_headers()
