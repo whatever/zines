@@ -91,4 +91,25 @@ def generate_pdf_doc(pages: list):
 
                 page.insert_image(rect, stream=byte_arr, rotate=zine.rotation)
                 page.draw_rect(rect)
+
+        if side == 0:
+            page.insert_text((3*WIDTH//8, 3*HEIGHT//8), "2")
+            page.draw_line(
+                (3*WIDTH//8, 3*HEIGHT//8),
+                (5*WIDTH//8, 3*HEIGHT//8),
+            )
+
+            page.insert_text((5*WIDTH//8, 5*HEIGHT//8), "3")
+            page.draw_line(
+                (5*WIDTH//8, 5*HEIGHT//8),
+                (5*WIDTH//8, 7*HEIGHT//8),
+            )
+
+        elif side == 1:
+            page.insert_text((3*WIDTH//8, 5*HEIGHT//8), "1")
+            page.draw_line(
+                (5*WIDTH//8, 3*HEIGHT//8),
+                (5*WIDTH//8, 5*HEIGHT//8),
+            )
+
     return doc
