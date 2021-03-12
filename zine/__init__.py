@@ -50,7 +50,7 @@ SEQUENCE = [
 PAGES = {
     i: ZinePage(
         num,
-        random_image(num),
+        page_image(num),
         (LEFT if i % 2 == 0 else RIGHT),
     )
     for i, num in enumerate(SEQUENCE)
