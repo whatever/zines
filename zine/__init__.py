@@ -1,27 +1,33 @@
-#!/usr/bin/env python3
+"""
+Functions to help generate 16-page PDF documents, used for making small zines.
+"""
 
 
-import argparse
 import io
 
 from collections import namedtuple
 
 import fitz
 
-from PIL import Image, ImageDraw
-
-from .samples import page_image, random_image
+from .samples import page_image
 
 
-# XXX: Make this configurable
-WIDTH, HEIGHT = fitz.PaperSize("A4")
 WIDTH, HEIGHT = fitz.PaperSize("letter")
 
 
 ZinePage = namedtuple("ZinePage", ["number", "image", "rotation"])
 
+LEFT = 270
 
+RIGHT = 90
+
+SEQUENCE = [
+    4, 5, 13, 12, 16, 9, 1, 8,
+    6, 3, 11, 14, 10, 15, 7, 2,
+]
 """
+Sequence of pages according to the below layout:
+
 Front                   Back
 +---------+---------+   +---------+---------+
 | <- 4    |    5 -> |   | <- 2    |    7 -> |
@@ -38,15 +44,6 @@ Front                   Back
 +---------+---------+   +---------+---------+
 """
 
-LEFT = 270
-
-RIGHT = 90
-
-SEQUENCE = [
-    4, 5, 13, 12, 16, 9, 1, 8,
-    2, 7, 15, 10, 14, 11, 3, 6, 
-]
-
 PAGES = {
     i: ZinePage(
         num,
@@ -55,24 +52,26 @@ PAGES = {
     )
     for i, num in enumerate(SEQUENCE)
 }
+"""Mapping between cell-position on page to actual page number"""
+
 
 def generate_pdf_doc(pages: list):
     """Return a PIL.Image from a ZinePage"""
 
-    assert isinstance(pages, list) and len(pages) == 16, "images must be a list of length 16"
+    assert \
+        isinstance(pages, list) and len(pages) == 16, \
+        "images must be a list of length 16"
 
     doc = fitz.open()
 
-    for s in range(2):
+    for side in range(2):
 
         page = doc.newPage(width=WIDTH, height=HEIGHT)
 
         for j in range(4):
             for i in range(2):
-                x = i*WIDTH/2 + WIDTH/4
-                y = j*HEIGHT/4 + HEIGHT/8
 
-                k = 8*s + 2*j + i
+                k = 8*side + 2*j + i
 
                 zine = pages[k]
 
