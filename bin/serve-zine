@@ -9,7 +9,11 @@ import logging
 import os
 import socketserver
 
-from zine import PAGES, generate_pdf_doc
+from urllib.parse import parse_qs
+
+from zine import PAGES, generate_pages, generate_pdf_doc, data_url_to_image
+
+import PIL
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -52,13 +56,36 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(doc.tobytes())
 
     def do_POST(self):
-        self.send_response(200)
-        self.send_header("Content-type", "application/pdf")
-        self.end_headers()
+
+        # Parse as images
+        content_type = self.headers['Content-Type']
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length)
+        fields = parse_qs(post_data)
+
+        # Generate Images + PDF
+        image_data_urls = [
+            fields["page-{}".format(i+1).encode()][0]
+            for i in range(16)
+        ]
+
+        images = [
+            data_url_to_image(url)
+            for url in image_data_urls
+        ]
+
+        pages = generate_pages(images)
+
         doc = generate_pdf_doc([
-            PAGES.get(i)
+            pages.get(i)
             for i in range(16)
         ])
+
+        # Write response
+        self.send_response(200)
+        self.send_header("Content-type", "application/pdf")
+        self.send_header("Cache-Control", "no-store,max-age=0")
+        self.end_headers()
         self.wfile.write(doc.tobytes())
 
 
@@ -67,6 +94,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=8080)
     args = parser.parse_args()
+
+    pil_logger = logging.getLogger('PIL')
+    pil_logger.setLevel(logging.INFO)
 
     logging.basicConfig(level=logging.DEBUG)
     logging.info("Starting server on 0.0.0.0:%d", args.port)

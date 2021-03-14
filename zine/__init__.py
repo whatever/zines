@@ -58,14 +58,16 @@ PAGES = {
 
 
 def strip_prefix(encoded):
-    return encoded.replace("data:image/png;base64,", "")
+    """Return base64 png image"""
+    return encoded.replace(b"data:image/png;base64,", b"")
 
-def url_to_bytes(url):
+def url_to_bytes(url: bytes):
+    """Return bytes url to decoded bytes array"""
     return b64decode(strip_prefix(url))
 
 
 def data_url_to_image(url: str) -> PIL.Image:
-    """Return Image from a data url"""
+    """Return PIL.Image from Data URL"""
     decoded = url_to_bytes(url)
     image = PIL.Image.open(io.BytesIO(decoded))
     image.load()
@@ -73,8 +75,7 @@ def data_url_to_image(url: str) -> PIL.Image:
 
 
 def generate_pages(images):
-    """Return a list of pages filled with sample images"""
-    # print(images[1])
+    """Return a list of zine-pages with images"""
     return {
         i: ZinePage(
             num,
@@ -85,7 +86,7 @@ def generate_pages(images):
     }
 
 
-def generate_pdf_doc(pages: list):
+def generate_pdf_doc(pages: list, debug=True):
     """Return a PIL.Image from a ZinePage"""
 
     assert \
@@ -122,24 +123,25 @@ def generate_pdf_doc(pages: list):
                 page.insert_image(rect, stream=byte_arr, rotate=zine.rotation)
                 page.draw_rect(rect)
 
-        if side == 0:
-            page.insert_text((3*WIDTH//8, 3*HEIGHT//8), "2")
-            page.draw_line(
-                (3*WIDTH//8, 3*HEIGHT//8),
-                (5*WIDTH//8, 3*HEIGHT//8),
-            )
+        if debug:
+            if side == 0:
+                page.insert_text((3*WIDTH//8, 3*HEIGHT//8), "2")
+                page.draw_line(
+                    (3*WIDTH//8, 3*HEIGHT//8),
+                    (5*WIDTH//8, 3*HEIGHT//8),
+                )
 
-            page.insert_text((5*WIDTH//8, 5*HEIGHT//8), "3")
-            page.draw_line(
-                (5*WIDTH//8, 5*HEIGHT//8),
-                (5*WIDTH//8, 7*HEIGHT//8),
-            )
+                page.insert_text((5*WIDTH//8, 5*HEIGHT//8), "3")
+                page.draw_line(
+                    (5*WIDTH//8, 5*HEIGHT//8),
+                    (5*WIDTH//8, 7*HEIGHT//8),
+                )
 
-        elif side == 1:
-            page.insert_text((3*WIDTH//8, 5*HEIGHT//8), "1")
-            page.draw_line(
-                (5*WIDTH//8, 3*HEIGHT//8),
-                (5*WIDTH//8, 5*HEIGHT//8),
-            )
+            elif side == 1:
+                page.insert_text((3*WIDTH//8, 5*HEIGHT//8), "1")
+                page.draw_line(
+                    (5*WIDTH//8, 3*HEIGHT//8),
+                    (5*WIDTH//8, 5*HEIGHT//8),
+                )
 
     return doc
