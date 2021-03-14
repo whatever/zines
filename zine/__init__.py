@@ -2,8 +2,10 @@
 Functions to help generate 16-page PDF documents, used for making small zines.
 """
 
+from base64 import b64decode
 
 import io
+import PIL
 
 from collections import namedtuple
 
@@ -55,6 +57,34 @@ PAGES = {
 """Mapping between cell-position on page to actual page number"""
 
 
+def strip_prefix(encoded):
+    return encoded.replace("data:image/png;base64,", "")
+
+def url_to_bytes(url):
+    return b64decode(strip_prefix(url))
+
+
+def data_url_to_image(url: str) -> PIL.Image:
+    """Return Image from a data url"""
+    decoded = url_to_bytes(url)
+    image = PIL.Image.open(io.BytesIO(decoded))
+    image.load()
+    return image
+
+
+def generate_pages(images):
+    """Return a list of pages filled with sample images"""
+    # print(images[1])
+    return {
+        i: ZinePage(
+            num,
+            images[num-1],
+            (LEFT if i % 2 == 0 else RIGHT),
+        )
+        for i, num in enumerate(SEQUENCE)
+    }
+
+
 def generate_pdf_doc(pages: list):
     """Return a PIL.Image from a ZinePage"""
 
@@ -79,7 +109,7 @@ def generate_pdf_doc(pages: list):
                     raise "This failed in a way that we did not expect."
 
                 byte_arr = io.BytesIO()
-                zine.image.save(byte_arr, format="JPEG")
+                zine.image.save(byte_arr, format="PNG")
 
                 rect = fitz.Rect(
                     i * WIDTH/2.0,

@@ -21,7 +21,8 @@ def page_image(num: int) -> Image:
     col = "white"
     img = Image.new("RGB", (width, height), color=col)
     draw = ImageDraw.Draw(img)
-    draw.text((width//8, height//2), f"page={num}...Fuck this", (0, 0, 0))
+    r = random.randint(0, 100)
+    draw.text((width//8, height//2), f"page={num}...Fuck this {r}", (0, 0, 0))
     return img
 
 
