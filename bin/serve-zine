@@ -53,9 +53,13 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
         self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        self.send_header("Content-type", "application/pdf")
         self.end_headers()
-        self.wfile.write(b"not found")
+        doc = generate_pdf_doc([
+            PAGES.get(i)
+            for i in range(16)
+        ])
+        self.wfile.write(doc.tobytes())
 
 
 if __name__ == "__main__":
